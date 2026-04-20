@@ -1,0 +1,1573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Stride">
+<title>Stride</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --accent:#F04E0A; --accent2:#FF6B30;
+  --bg:#0A0A0A; --bg2:#141414; --bg3:#1C1C1C; --bg4:#242424; --bg5:#2E2E2E;
+  --line:rgba(255,255,255,0.07); --line2:rgba(255,255,255,0.13);
+  --text:#EDEAE5; --sub:#888880; --sub2:#4A4A46;
+  --green:#3DB87A; --blue:#4A9EE0; --gold:#C8A84B;
+  --r:10px; --r2:14px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;}
+
+/* HEADER */
+header{position:sticky;top:0;z-index:50;background:var(--bg);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:58px;}
+.wordmark{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px;color:var(--accent);}
+.wordmark em{color:var(--text);font-style:normal;}
+.upload-pill{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--line2);border-radius:20px;padding:6px 14px;cursor:pointer;font-size:12px;font-weight:500;color:var(--sub);transition:border-color .15s,color .15s;}
+.upload-pill:hover{border-color:var(--accent);color:var(--text);}
+.upload-pill input{display:none;}
+.upload-pill svg{width:14px;height:14px;flex-shrink:0;}
+#uploadStatus{font-size:11px;color:var(--green);margin-left:8px;display:none;}
+
+/* TABS */
+.tabs{display:flex;gap:2px;padding:0 2rem;background:var(--bg);border-bottom:1px solid var(--line);}
+.tab{font-size:13px;font-weight:500;color:var(--sub);padding:12px 16px;border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;margin-bottom:-1px;white-space:nowrap;}
+.tab.active{color:var(--text);border-bottom-color:var(--accent);}
+.tab:hover:not(.active){color:var(--text);}
+
+/* MAIN */
+main{max-width:1100px;margin:0 auto;padding:2rem;}
+.pane{display:none;}
+.pane.active{display:block;}
+
+/* BUTTONS */
+.btn{background:var(--accent);color:#fff;border:none;padding:8px 16px;border-radius:20px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:background .15s,transform .1s;white-space:nowrap;}
+.btn:hover{background:var(--accent2);}
+.btn:active{transform:scale(.97);}
+.btn-ghost{background:var(--bg3);color:var(--text);border:1px solid var(--line2);}
+.btn-ghost:hover{background:var(--bg4);}
+.btn-outline{background:transparent;color:var(--accent);border:1px solid var(--accent);}
+.btn-outline:hover{background:rgba(240,78,10,.08);}
+.btn-sm{padding:5px 12px;font-size:11px;}
+.ic-btn{width:26px;height:26px;border-radius:6px;border:1px solid var(--line);background:var(--bg3);color:var(--sub);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.ic-btn:hover{color:var(--text);border-color:var(--line2);}
+.ic-btn.pin.on{color:var(--accent);border-color:rgba(240,78,10,.4);background:rgba(240,78,10,.08);}
+.ic-btn.del:hover{color:#F4A0A0;background:#2A1010;}
+.ic-btn.edit:hover{color:var(--blue);border-color:rgba(74,158,224,.4);}
+
+/* DASHBOARD */
+.dash-cta{background:var(--bg2);border:1.5px dashed var(--line2);border-radius:var(--r2);padding:3rem;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;}
+.dash-cta:hover{border-color:var(--accent);background:rgba(240,78,10,.04);}
+.dash-cta input{display:none;}
+.cta-icon{font-size:40px;margin-bottom:.75rem;}
+.cta-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1.5px;margin-bottom:.4rem;}
+.cta-sub{font-size:13px;color:var(--sub);}
+.gtag{display:inline-block;margin-top:.8rem;background:rgba(61,184,122,.1);color:var(--green);font-size:11px;font-weight:600;padding:3px 10px;border-radius:4px;letter-spacing:.5px;}
+
+.mile-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.6rem;}
+.mile-card{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r2);padding:1.3rem 1.5rem;position:relative;overflow:hidden;}
+.mile-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);opacity:.5;}
+.mile-label{font-size:10px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;color:var(--sub);margin-bottom:.5rem;}
+.mile-val{font-family:'Bebas Neue',sans-serif;font-size:42px;line-height:1;color:var(--text);}
+.mile-unit{font-size:13px;color:var(--sub);margin-left:3px;}
+.mile-runs{font-size:11px;color:var(--sub2);margin-top:4px;}
+
+.pinned-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
+.pinned-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1.5px;color:var(--sub);}
+.pinned-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:10px;}
+.pinned-card{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:1rem 1.2rem;}
+.pinned-dist{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--accent);margin-bottom:4px;}
+.pinned-time{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:1px;line-height:1;}
+.pinned-pace{font-size:11px;color:var(--sub);margin-top:4px;}
+.no-pinned{font-size:13px;color:var(--sub2);padding:.4rem 0;}
+
+/* PR GRID */
+.toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;flex-wrap:wrap;gap:8px;}
+.toolbar-left{display:flex;gap:8px;flex-wrap:wrap;}
+.pr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;}
+.pr-card{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r2);padding:1.2rem 1.3rem;position:relative;transition:border-color .15s;}
+.pr-card:hover{border-color:var(--line2);}
+.pr-card.pinned{border-color:rgba(240,78,10,.35);}
+.pr-src{font-size:9px;font-weight:700;letter-spacing:1px;color:var(--green);opacity:.7;margin-bottom:5px;display:block;}
+.pr-dist-lbl{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--accent);margin-bottom:3px;}
+.pr-time-big{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:1px;line-height:1;margin-bottom:5px;}
+.pr-meta{font-size:11px;color:var(--sub);line-height:1.6;}
+.pr-pace-pill{display:inline-block;background:rgba(240,78,10,.1);color:var(--accent2);font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;margin-top:5px;}
+.pr-actions{position:absolute;top:10px;right:10px;display:flex;gap:5px;opacity:0;transition:opacity .15s;}
+.pr-card:hover .pr-actions{opacity:1;}
+
+/* IMPORT PANEL */
+.import-panel{background:var(--bg2);border:1px solid var(--line2);border-radius:var(--r2);padding:1.3rem;margin-bottom:1.3rem;display:none;}
+.import-panel-title{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:1px;margin-bottom:.9rem;}
+.import-row{display:flex;align-items:center;gap:10px;background:var(--bg3);border-radius:var(--r);padding:9px 12px;margin-bottom:6px;}
+.import-row input[type=checkbox]{width:15px;height:15px;accent-color:var(--accent);flex-shrink:0;cursor:pointer;}
+.import-dist{font-family:'Bebas Neue',sans-serif;font-size:15px;color:var(--accent);min-width:120px;}
+.import-time{font-family:'Bebas Neue',sans-serif;font-size:21px;color:var(--text);flex:1;}
+.import-meta{font-size:10px;color:var(--sub);line-height:1.5;}
+.badge-new{font-size:10px;font-weight:700;color:var(--accent);margin-left:5px;}
+.badge-faster{font-size:10px;font-weight:700;color:var(--green);margin-left:5px;}
+.badge-same{font-size:10px;color:var(--sub2);margin-left:5px;}
+.import-note{font-size:11px;color:var(--sub);margin-bottom:.8rem;}
+.import-foot{display:flex;gap:8px;}
+
+/* ACTIVITY LOG */
+.log-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px;}
+.log-search{background:var(--bg3);border:1px solid var(--line2);color:var(--text);font-family:'Inter',sans-serif;font-size:12px;padding:7px 12px;border-radius:20px;outline:none;width:200px;transition:border-color .15s;}
+.log-search:focus{border-color:var(--accent);}
+.log-search::placeholder{color:var(--sub2);}
+.log-wrap{overflow-x:auto;border-radius:var(--r2);border:1px solid var(--line);}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+thead th{background:var(--bg3);color:var(--sub);font-weight:600;font-size:10px;letter-spacing:.8px;text-transform:uppercase;padding:10px 14px;text-align:left;white-space:nowrap;cursor:pointer;user-select:none;border-bottom:1px solid var(--line);}
+thead th:hover{color:var(--text);}
+thead th .sort-arrow{margin-left:4px;opacity:.4;}
+thead th.sorted .sort-arrow{opacity:1;color:var(--accent);}
+tbody tr{border-bottom:1px solid var(--line);transition:background .1s;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:var(--bg2);}
+tbody td{padding:10px 14px;color:var(--text);vertical-align:middle;}
+tbody td.muted{color:var(--sub);}
+.row-actions{display:flex;gap:5px;opacity:0;transition:opacity .15s;}
+tr:hover .row-actions{opacity:1;}
+
+/* PAGINATION */
+.pagination{display:flex;align-items:center;justify-content:space-between;margin-top:1rem;flex-wrap:wrap;gap:8px;}
+.page-info{font-size:12px;color:var(--sub);}
+.page-btns{display:flex;gap:6px;}
+.page-btn{background:var(--bg3);border:1px solid var(--line2);color:var(--text);font-family:'Inter',sans-serif;font-size:12px;padding:5px 12px;border-radius:6px;cursor:pointer;transition:all .15s;}
+.page-btn:hover:not(:disabled){background:var(--bg4);}
+.page-btn:disabled{opacity:.3;cursor:default;}
+.page-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+
+/* RACES FLIP CARDS */
+.races-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px;}
+.race-flip{perspective:900px;height:310px;cursor:pointer;}
+.race-flip-inner{position:relative;width:100%;height:100%;transition:transform .55s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d;}
+.race-flip.flipped .race-flip-inner{transform:rotateY(180deg);}
+.race-front,.race-back{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:var(--r2);overflow:hidden;}
+/* FRONT */
+.race-front{background:var(--bg2);border:1px solid var(--line);}
+.race-front-img{width:100%;height:200px;object-fit:cover;display:block;}
+.race-front-no-img{width:100%;height:200px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:60px;}
+.race-front-body{padding:11px 14px;}
+.race-front-name{font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px;}
+.race-front-date{font-size:11px;color:var(--sub);}
+.race-flip-hint{font-size:9px;color:var(--sub2);letter-spacing:.5px;margin-top:5px;text-transform:uppercase;}
+/* BACK */
+.race-back{background:var(--bg3);border:1px solid var(--line2);transform:rotateY(180deg);display:flex;flex-direction:column;padding:0;}
+.race-back-head{padding:14px 14px 10px;border-bottom:1px solid var(--line);}
+.race-back-name{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;line-height:1.1;margin-bottom:4px;}
+.race-back-meta{font-size:11px;color:var(--sub);line-height:1.8;}
+.race-back-badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;letter-spacing:.8px;text-transform:uppercase;margin-top:4px;}
+.mb-finisher{background:rgba(61,184,122,.12);color:var(--green);}
+.mb-ag{background:rgba(74,158,224,.12);color:var(--blue);}
+.mb-podium{background:rgba(200,168,75,.12);color:var(--gold);}
+.race-back-notes{padding:8px 14px;font-size:11px;color:var(--sub);line-height:1.5;flex:1;overflow:hidden;}
+.race-back-photos{padding:8px 14px 12px;display:flex;gap:6px;flex-wrap:wrap;}
+.race-back-thumb{width:44px;height:44px;border-radius:6px;object-fit:cover;cursor:pointer;border:1px solid var(--line2);transition:border-color .15s;}
+.race-back-thumb:hover{border-color:var(--accent);}
+.race-back-actions{padding:8px 14px;display:flex;gap:6px;border-top:1px solid var(--line);}
+/* multi-photo upload grid */
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px;}
+.photo-cell{aspect-ratio:1;border-radius:var(--r);overflow:hidden;background:var(--bg3);border:1.5px dashed var(--line2);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:border-color .15s;}
+.photo-cell:hover{border-color:var(--accent);}
+.photo-cell img{width:100%;height:100%;object-fit:cover;}
+.photo-cell .photo-del{position:absolute;top:3px;right:3px;background:rgba(0,0,0,.7);border:none;color:#fff;width:18px;height:18px;border-radius:3px;cursor:pointer;font-size:10px;display:flex;align-items:center;justify-content:center;}
+.photo-cell-add{font-size:20px;color:var(--sub2);}
+.photo-label{font-size:10px;color:var(--sub);text-align:center;margin-top:4px;}
+.medal-badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;margin-top:5px;letter-spacing:.8px;text-transform:uppercase;}
+
+/* MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:200;align-items:center;justify-content:center;padding:1.5rem;}
+.overlay.open{display:flex;}
+.modal{background:var(--bg2);border:1px solid var(--line2);border-radius:16px;padding:1.8rem;width:100%;max-width:460px;max-height:92vh;overflow-y:auto;}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1.5px;margin-bottom:1.3rem;}
+.fg{margin-bottom:.85rem;}
+.fg label{display:block;font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--sub);margin-bottom:5px;}
+.fg input,.fg select,.fg textarea{width:100%;background:var(--bg3);border:1px solid var(--line2);color:var(--text);font-family:'Inter',sans-serif;font-size:13px;padding:8px 11px;border-radius:var(--r);outline:none;transition:border-color .15s;}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--accent);}
+.fg select option{background:var(--bg3);}
+.fg textarea{resize:vertical;min-height:70px;}
+.fg-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.modal-foot{display:flex;gap:8px;justify-content:flex-end;margin-top:1.3rem;}
+.img-drop{border:1.5px dashed var(--line2);border-radius:var(--r);padding:1.3rem;text-align:center;cursor:pointer;transition:border-color .15s,background .15s;}
+.img-drop:hover{border-color:var(--accent);background:rgba(240,78,10,.03);}
+.img-drop input{display:none;}
+.img-preview{max-width:100%;max-height:140px;border-radius:7px;margin-top:8px;}
+
+/* import mode modal */
+.import-opt-btn{width:100%;text-align:left;padding:12px 16px;background:var(--bg3);border:1px solid var(--line2);border-radius:var(--r);color:var(--text);font-family:'Inter',sans-serif;font-size:13px;cursor:pointer;margin-bottom:8px;transition:border-color .15s,background .15s;}
+.import-opt-btn:hover{border-color:var(--accent);background:rgba(240,78,10,.05);}
+.import-opt-btn strong{display:block;font-weight:600;margin-bottom:2px;}
+.import-opt-btn span{font-size:11px;color:var(--sub);}
+
+/* LIGHTBOX */
+.lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:300;align-items:center;justify-content:center;flex-direction:column;gap:.8rem;}
+.lightbox.open{display:flex;}
+.lightbox img{max-width:88vw;max-height:78vh;border-radius:var(--r2);}
+.lb-cap{font-size:13px;color:var(--sub);}
+.lb-close{position:absolute;top:1.2rem;right:1.2rem;background:var(--bg3);border:1px solid var(--line);color:var(--text);width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;}
+
+/* EMPTY */
+.empty{text-align:center;padding:4rem 1rem;color:var(--sub);}
+.empty-icon{font-size:44px;margin-bottom:.8rem;}
+.empty h3{font-size:17px;color:var(--text);margin-bottom:5px;font-weight:600;}
+.empty p{font-size:13px;max-width:280px;margin:0 auto;line-height:1.6;}
+
+/* activity picker */
+.act-pick-item{padding:9px 12px;cursor:pointer;border-bottom:1px solid var(--line);transition:background .1s;font-size:12px;}
+.act-pick-item:last-child{border-bottom:none;}
+.act-pick-item:hover{background:var(--bg4);}
+.act-pick-title{font-weight:500;color:var(--text);margin-bottom:2px;}
+.act-pick-meta{color:var(--sub);font-size:11px;}
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(12px);background:var(--bg3);border:1px solid var(--line2);color:var(--text);padding:9px 18px;border-radius:20px;font-size:12px;opacity:0;transition:opacity .2s,transform .2s;z-index:400;pointer-events:none;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ═══════════════════════════════════
+   iOS / MOBILE OVERRIDES
+═══════════════════════════════════ */
+@media(max-width:640px){
+
+  /* Safe areas for notch + home bar */
+  body {
+    padding-bottom: calc(70px + env(safe-area-inset-bottom));
+    padding-top: env(safe-area-inset-top);
+  }
+
+  /* Hide desktop header upload pill — move to bottom bar or pane */
+  header {
+    padding: 0 1rem;
+    height: 50px;
+    padding-left: calc(1rem + env(safe-area-inset-left));
+    padding-right: calc(1rem + env(safe-area-inset-right));
+  }
+
+  /* Hide desktop tabs — replaced by bottom nav */
+  .tabs { display: none; }
+
+  /* Bottom tab bar */
+  .bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0; right: 0;
+    background: var(--bg);
+    border-top: 1px solid var(--line);
+    z-index: 100;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .bottom-nav-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 4px 6px;
+    background: none;
+    border: none;
+    color: var(--sub);
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    cursor: pointer;
+    gap: 3px;
+    transition: color .15s;
+    -webkit-tap-highlight-color: transparent;
+    min-height: 56px;
+  }
+  .bottom-nav-btn.active { color: var(--accent); }
+  .bottom-nav-btn svg { width: 22px; height: 22px; }
+
+  main { padding: 1rem; }
+
+  /* Stats row: 2 cols */
+  .mile-row { grid-template-columns: 1fr 1fr; }
+  .mile-row .mile-card:last-child { grid-column: 1 / -1; }
+  .mile-val { font-size: 32px; }
+
+  /* PR grid: 1 col */
+  .pr-grid { grid-template-columns: 1fr; }
+
+  /* Always show PR action buttons on mobile */
+  .pr-actions {
+    opacity: 1 !important;
+    position: static;
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 6px;
+  }
+  .ic-btn { width: 36px; height: 36px; font-size: 14px; }
+
+  /* Activity log: swap table for card list on mobile */
+  .log-wrap { border: none; border-radius: 0; overflow-x: visible; }
+  #logTable thead { display: none; }
+  #logTable tbody tr {
+    display: block;
+    background: var(--bg2);
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    margin-bottom: 8px;
+    padding: 10px 12px;
+  }
+  #logTable tbody tr:hover { background: var(--bg2); }
+  #logTable tbody td {
+    display: inline-block;
+    padding: 1px 4px 1px 0;
+    border: none;
+    font-size: 12px;
+  }
+  #logTable tbody td:first-child {
+    display: block;
+    font-weight: 600;
+    font-size: 11px;
+    color: var(--sub);
+    margin-bottom: 3px;
+    padding: 0;
+  }
+  #logTable tbody td:nth-child(2) {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    padding: 0 0 4px;
+  }
+  /* Always show row actions on mobile */
+  .row-actions {
+    opacity: 1 !important;
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+  }
+  #logTable tbody td:last-child {
+    display: block;
+    padding: 0;
+  }
+
+  /* Races: 1 col */
+  .races-grid { grid-template-columns: 1fr; }
+  .race-flip { height: 280px; }
+
+  /* Pinned PRs: 2 col */
+  .pinned-grid { grid-template-columns: 1fr 1fr; }
+
+  /* Bigger touch targets for buttons */
+  .btn { padding: 10px 18px; font-size: 13px; min-height: 40px; }
+  .btn-sm { padding: 8px 14px; font-size: 12px; min-height: 36px; }
+
+  /* Upload pill: slightly bigger */
+  .upload-pill { padding: 8px 14px; font-size: 12px; }
+
+  /* Search: full width */
+  .log-search { width: 100%; }
+  .log-toolbar { flex-direction: column; align-items: flex-start; gap: 10px; }
+
+  /* Toolbar wrap */
+  .toolbar { flex-wrap: wrap; }
+  .toolbar-left { flex-wrap: wrap; }
+
+  /* Pagination: smaller */
+  .page-btn { padding: 6px 10px; font-size: 11px; }
+
+  /* Modal: full screen on mobile */
+  .overlay { padding: 0; align-items: flex-end; }
+  .modal {
+    border-radius: 20px 20px 0 0;
+    max-height: 90vh;
+    padding: 1.4rem 1.2rem calc(1.4rem + env(safe-area-inset-bottom));
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Prevent zoom on input focus (iOS) */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Show bottom nav only on mobile */
+.bottom-nav { display: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wordmark">STRIDE<em>.</em></div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <label class="upload-pill">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2v8M5 5l3-3 3 3M2 11v2a1 1 0 001 1h10a1 1 0 001-1v-2"/></svg>
+      <span id="hdrUploadTxt">Upload Garmin CSV</span>
+      <input type="file" accept=".csv" onchange="handleCSV(this)">
+    </label>
+    <span id="uploadStatus"></span>
+  </div>
+</header>
+
+<div class="tabs">
+  <button class="tab active" onclick="showPane('dash',this)">Dashboard</button>
+  <button class="tab" onclick="showPane('prs',this)">PRs</button>
+  <button class="tab" onclick="showPane('log',this)">Activity Log</button>
+  <button class="tab" onclick="showPane('races',this)">Races</button>
+</div>
+
+<main>
+
+  <!-- ══ DASHBOARD ══ -->
+  <div id="pane-dash" class="pane active">
+    <label class="dash-cta" id="dashCTA">
+      <input type="file" accept=".csv" onchange="handleCSV(this)">
+      <div class="cta-icon">📂</div>
+      <div class="cta-title">Upload Your Garmin Export</div>
+      <div class="cta-sub">Activities.csv from Garmin Connect powers the entire app</div>
+      <div class="gtag">GARMIN CONNECT · CSV</div>
+    </label>
+    <div id="dashData" style="display:none">
+      <div class="mile-row">
+        <div class="mile-card">
+          <div class="mile-label">This Month</div>
+          <div><span class="mile-val" id="miMonth">0</span><span class="mile-unit">mi</span></div>
+          <div class="mile-runs" id="miMonthR"></div>
+        </div>
+        <div class="mile-card">
+          <div class="mile-label">This Year</div>
+          <div><span class="mile-val" id="miYear">0</span><span class="mile-unit">mi</span></div>
+          <div class="mile-runs" id="miYearR"></div>
+        </div>
+        <div class="mile-card">
+          <div class="mile-label">All Time</div>
+          <div><span class="mile-val" id="miAll">0</span><span class="mile-unit">mi</span></div>
+          <div class="mile-runs" id="miAllR"></div>
+        </div>
+      </div>
+      <div class="pinned-hdr">
+        <span class="pinned-title">Pinned PRs</span>
+        <span style="font-size:11px;color:var(--sub2)" id="pinHint">Pin PRs from the PRs tab →</span>
+      </div>
+      <div class="pinned-grid" id="pinnedGrid">
+        <div class="no-pinned" id="noPinned">No PRs pinned yet. Go to PRs and tap the 📌 icon.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PRs ══ -->
+  <div id="pane-prs" class="pane">
+    <div class="import-panel" id="importPanel">
+      <div class="import-panel-title">PRs Detected in Garmin Export</div>
+      <div id="importRows"></div>
+      <div class="import-note" id="importNote"></div>
+      <div class="import-foot">
+        <button class="btn" onclick="confirmImport()">Save Selected</button>
+        <button class="btn btn-ghost" onclick="dismissImport()">Cancel</button>
+      </div>
+    </div>
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <button class="btn btn-outline" onclick="document.querySelector('#pane-prs input[type=file]').click()">⬆ Import CSV</button>
+        <input type="file" accept=".csv" style="display:none" onchange="handleCSV(this)">
+        <button class="btn" onclick="openPRModal()">+ Add PR</button>
+      </div>
+      <div style="font-size:11px;color:var(--sub)">📌 pins to dashboard</div>
+    </div>
+    <div class="pr-grid" id="prGrid"></div>
+    <div id="prEmpty" class="empty"><div class="empty-icon">🏃</div><h3>No PRs yet</h3><p>Import your Garmin CSV or add one manually.</p></div>
+  </div>
+
+  <!-- ══ ACTIVITY LOG ══ -->
+  <div id="pane-log" class="pane">
+    <div class="log-toolbar">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:1.5px;color:var(--sub)">Activity Log</div>
+        <button class="btn btn-sm" onclick="openRunModal(null)">+ Add Run</button>
+        <button class="btn btn-sm btn-ghost" onclick="exportActivities()">⬇ Export JSON</button>
+        <label class="btn btn-sm btn-ghost" style="cursor:pointer;">⬆ Import JSON<input type="file" accept=".json" style="display:none" onchange="importActivities(this)"></label>
+      </div>
+      <input class="log-search" type="text" id="logSearch" placeholder="Search runs…" oninput="filterLog()">
+    </div>
+    <div class="log-wrap">
+      <table id="logTable">
+        <thead>
+          <tr>
+            <th onclick="sortLog('Date')" id="th-Date">Date <span class="sort-arrow">↕</span></th>
+            <th onclick="sortLog('Title')" id="th-Title">Title <span class="sort-arrow">↕</span></th>
+            <th onclick="sortLog('Type')" id="th-Type">Type <span class="sort-arrow">↕</span></th>
+            <th onclick="sortLog('Distance')" id="th-Distance">Distance <span class="sort-arrow">↕</span></th>
+            <th onclick="sortLog('Time')" id="th-Time">Time <span class="sort-arrow">↕</span></th>
+            <th onclick="sortLog('Pace')" id="th-Pace">Avg Pace <span class="sort-arrow">↕</span></th>
+            <th onclick="sortLog('Calories')" id="th-Calories">Cal <span class="sort-arrow">↕</span></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="logBody"></tbody>
+      </table>
+    </div>
+    <div class="pagination" id="pagination"></div>
+    <div id="logEmpty" class="empty" style="display:none"><div class="empty-icon">📋</div><h3>No activity data</h3><p>Upload your Garmin CSV to see your run history.</p></div>
+  </div>
+
+  <!-- ══ RACES ══ -->
+  <div id="pane-races" class="pane">
+    <div class="toolbar">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:1.5px;color:var(--sub)">Race Collection</div>
+      <button class="btn" onclick="openRaceModal()">+ Add Race</button>
+    </div>
+    <div class="races-grid" id="racesGrid"></div>
+    <div id="racesEmpty" class="empty"><div class="empty-icon">🏅</div><h3>No races yet</h3><p>Add your races with medals, photos, and finish details.</p></div>
+  </div>
+
+</main>
+
+<!-- ══ BOTTOM NAV (mobile only) ══ -->
+<nav class="bottom-nav" id="bottomNav">
+  <button class="bottom-nav-btn active" id="bnDash" onclick="showPane('dash',document.querySelectorAll('.tab')[0]);setBottomNav('bnDash')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    Dashboard
+  </button>
+  <button class="bottom-nav-btn" id="bnPrs" onclick="showPane('prs',document.querySelectorAll('.tab')[1]);setBottomNav('bnPrs')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="5"/><path d="M9 11l-4 9 7-3 7 3-4-9"/></svg>
+    PRs
+  </button>
+  <button class="bottom-nav-btn" id="bnLog" onclick="showPane('log',document.querySelectorAll('.tab')[2]);setBottomNav('bnLog')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+    Log
+  </button>
+  <button class="bottom-nav-btn" id="bnRaces" onclick="showPane('races',document.querySelectorAll('.tab')[3]);setBottomNav('bnRaces')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>
+    Races
+  </button>
+</nav>
+
+<!-- ══ IMPORT MODE MODAL ══ -->
+<div class="overlay" id="importModeModal">
+  <div class="modal">
+    <div class="modal-title">Re-import CSV</div>
+    <p style="font-size:13px;color:var(--sub);margin-bottom:1.2rem;line-height:1.7">You already have data loaded. How should this import be handled?</p>
+    <button class="import-opt-btn" onclick="doImport('refresh')">
+      <strong>🔄 Refresh everything</strong>
+      <span>Replace all run data and PR detection with this file</span>
+    </button>
+    <button class="import-opt-btn" onclick="doImport('update')">
+      <strong>↑ Update only</strong>
+      <span>Add new runs, only replace PRs that are faster</span>
+    </button>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="closeImportMode()">Cancel</button></div>
+  </div>
+</div>
+
+<!-- ══ PR MODAL ══ -->
+<div class="overlay" id="prModal">
+  <div class="modal">
+    <div class="modal-title" id="prModalTitle">Add PR</div>
+    <div class="fg">
+      <label>Distance</label>
+      <select id="prDist">
+        <option>1 Mile</option><option>5K</option><option>10K</option><option>15K</option>
+        <option>Half Marathon</option><option>Marathon</option>
+        <option>Ultra 50K</option><option>Ultra 50M</option><option>Ultra 100M</option>
+        <option value="custom">Custom…</option>
+      </select>
+    </div>
+    <div class="fg" id="prCustomWrap" style="display:none">
+      <label>Custom name</label>
+      <input type="text" id="prCustomName" placeholder="e.g. 8K, 30K…">
+    </div>
+    <div class="fg-row">
+      <div class="fg"><label>Hours</label><input type="number" id="prH" min="0" max="99" placeholder="0"></div>
+      <div class="fg"><label>Minutes</label><input type="number" id="prM" min="0" max="59" placeholder="28"></div>
+    </div>
+    <div class="fg"><label>Seconds</label><input type="number" id="prS" min="0" max="59" placeholder="0"></div>
+    <div class="fg-row">
+      <div class="fg"><label>Race / Event</label><input type="text" id="prRace" placeholder="e.g. KC 10K"></div>
+      <div class="fg"><label>Date</label><input type="date" id="prDate"></div>
+    </div>
+    <div class="fg"><label>Notes</label><textarea id="prNotes" placeholder="Conditions, how you felt…"></textarea></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closePRModal()">Cancel</button>
+      <button class="btn" onclick="savePRModal()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ RUN MODAL ══ -->
+<div class="overlay" id="runModal">
+  <div class="modal">
+    <div class="modal-title" id="runModalTitle">Edit Run</div>
+    <div class="fg"><label>Title</label><input type="text" id="runTitle" placeholder="e.g. Morning Run"></div>
+    <div class="fg-row">
+      <div class="fg"><label>Date</label><input type="date" id="runDate"></div>
+      <div class="fg"><label>Distance (miles)</label><input type="number" id="runDist" step="0.01" placeholder="3.10" oninput="autoCalcRun()"></div>
+    </div>
+    <div class="fg"><label>Time (H:MM:SS or MM:SS)</label><input type="text" id="runTime" placeholder="00:45:30" oninput="autoCalcRun()"></div>
+    <div class="fg">
+      <label>Avg Pace <span id="paceAutoTag" style="color:var(--green);font-size:10px;font-weight:400;text-transform:none;letter-spacing:0;display:none"> · auto-calculated</span></label>
+      <input type="text" id="runPace" placeholder="9:04 /mi">
+    </div>
+    <div class="fg">
+      <label>Calories <span id="calAutoTag" style="color:var(--green);font-size:10px;font-weight:400;text-transform:none;letter-spacing:0;display:none"> · auto-calculated</span></label>
+      <input type="number" id="runCal" placeholder="465">
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeRunModal()">Cancel</button>
+      <button class="btn" onclick="saveRunModal()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ RACE MODAL ══ -->
+<div class="overlay" id="raceModal">
+  <div class="modal" style="max-width:520px;">
+    <div class="modal-title" id="raceModalTitle">Add Race</div>
+
+    <!-- Activity picker -->
+    <div class="fg" id="actPickerWrap">
+      <label>Link Activity <span style="color:var(--sub2);font-weight:400;text-transform:none;letter-spacing:0"> · auto-fills fields below</span></label>
+      <input type="text" id="actSearch" placeholder="Search by title or date (e.g. 'Kansas City' or '2025-11')…" oninput="filterActPicker()" autocomplete="off">
+      <div id="actPickerList" style="display:none;max-height:180px;overflow-y:auto;background:var(--bg3);border:1px solid var(--line2);border-radius:var(--r);margin-top:4px;"></div>
+      <div id="actPickerSelected" style="display:none;margin-top:6px;background:rgba(61,184,122,.08);border:1px solid rgba(61,184,122,.2);border-radius:var(--r);padding:8px 12px;font-size:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+        <span id="actPickerSelectedText"></span>
+        <button onclick="clearActPicker()" style="background:none;border:none;color:var(--sub);cursor:pointer;font-size:14px;padding:0;">✕</button>
+      </div>
+    </div>
+    <div style="border-top:1px solid var(--line);margin:4px 0 14px;"></div>
+
+    <div class="fg"><label>Race / Event Name</label><input type="text" id="rName" placeholder="e.g. Rock the Parkway Half Marathon"></div>
+    <div class="fg-row">
+      <div class="fg"><label>Date</label><input type="date" id="rDate"></div>
+      <div class="fg">
+        <label>Distance</label>
+        <select id="rDist"><option>5K</option><option>10K</option><option>15K</option><option>Half Marathon</option><option>Marathon</option><option>Ultra 50K</option><option>Ultra 50M</option><option>Ultra 100M</option><option>Other</option></select>
+      </div>
+    </div>
+    <div class="fg-row">
+      <div class="fg"><label>Finish Time (H:MM:SS)</label><input type="text" id="rTime" placeholder="1:54:32"></div>
+      <div class="fg">
+        <label>Finish Type</label>
+        <select id="rType"><option value="finisher">Finisher</option><option value="ag">Age Group</option><option value="podium">Podium</option></select>
+      </div>
+    </div>
+    <div class="fg"><label>Notes / Race Recap</label><textarea id="rNotes" placeholder="How it went, conditions, memorable moments…"></textarea></div>
+    <div class="fg">
+      <label>Medal Photo <span style="color:var(--sub2);font-weight:400;text-transform:none;letter-spacing:0">(main / front of card)</span></label>
+      <div class="img-drop" onclick="document.getElementById('rMedalInput').click()">
+        <input type="file" id="rMedalInput" accept="image/*" onchange="previewMedalPhoto(this)">
+        <div id="rMedalWrap"><div style="font-size:26px">🏅</div><div style="font-size:11px;color:var(--sub);margin-top:4px">Click to upload medal photo</div></div>
+      </div>
+    </div>
+    <div class="fg">
+      <label>Additional Photos <span style="color:var(--sub2);font-weight:400;text-transform:none;letter-spacing:0">(course, bib, finish line — up to 5)</span></label>
+      <div class="photo-grid" id="rPhotoGrid"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeRaceModal()">Cancel</button>
+      <button class="btn" onclick="saveRace()">Save Race</button>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLB()">
+  <div class="lb-close">✕</div>
+  <img id="lbImg" src="" alt="">
+  <div class="lb-cap" id="lbCap"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════
+// STATE
+// ═══════════════════════════════════
+const STORE = 'stride_v4';
+let db = JSON.parse(localStorage.getItem(STORE) || '{"prs":[],"races":[],"runs":[]}');
+if (!db.races) db.races = [];
+if (!db.medals) db.medals = []; // keep for backwards compat
+let pendingRuns = [], pendingPRs = [];
+let editPRId = null, editMedalId = null, editRunIdx = null;
+let tmpImg = null, tmpMedalId = null;
+
+// log state
+let logFiltered = [], logSort = { col:'Date', dir:-1 }, logPage = 0;
+const PAGE = 25;
+const KM_TO_MI = 0.621371;
+
+function persist() { localStorage.setItem(STORE, JSON.stringify(db)); }
+
+// ═══════════════════════════════════
+// TABS
+// ═══════════════════════════════════
+function showPane(id, btn) {
+  document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('pane-' + id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'log') renderLog();
+  if (id === 'races') renderRaces();
+}
+
+// ═══════════════════════════════════
+// TIME HELPERS
+// ═══════════════════════════════════
+function toSecs(t) {
+  if (!t || t==='--') return null;
+  const p = t.trim().split(':');
+  try {
+    if (p.length===3) return +p[0]*3600 + +p[1]*60 + parseFloat(p[2]);
+    if (p.length===2) return +p[0]*60 + parseFloat(p[1]);
+  } catch { return null; }
+}
+function hms(s) { s=Math.round(s); return {h:Math.floor(s/3600),m:Math.floor((s%3600)/60),s:s%60}; }
+function fmtTime(h,m,s) {
+  h=+h||0;m=+m||0;s=+s||0;
+  return h>0 ? `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}` : `${m}:${String(s).padStart(2,'0')}`;
+}
+function calcPace(distLabel,h,m,s) {
+  // distances stored in miles already; map label to miles
+  const mi={'1 Mile':1,'5K':3.10686,'10K':6.21371,'15K':9.32057,'Half Marathon':13.1094,'Marathon':26.2188,'Ultra 50K':31.0686,'Ultra 50M':50,'Ultra 100M':100}[distLabel];
+  if (!mi) return null;
+  const tot=(+h||0)*3600+(+m||0)*60+(+s||0); if(!tot) return null;
+  const ps=tot/mi; return `${Math.floor(ps/60)}:${String(Math.round(ps%60)).padStart(2,'0')} /mi`;
+}
+function fmtDate(d) {
+  if (!d) return '';
+  const [y,mo,dy] = d.split('-');
+  return `${'Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec'.split(' ')[+mo-1]} ${+dy}, ${y}`;
+}
+function isoDate(d) {
+  if (!d) return '';
+  return d.slice(0,10);
+}
+
+// ═══════════════════════════════════
+// CSV PARSING
+// ═══════════════════════════════════
+function parseCSV(text) {
+  text = text.replace(/^\uFEFF/,'');
+  const lines = text.split('\n').filter(l=>l.trim());
+  const headers = splitLine(lines[0]).map(h=>h.trim());
+  return lines.slice(1).map(line => {
+    const vals = splitLine(line);
+    const row = {};
+    headers.forEach((h,i)=>{ row[h]=(vals[i]||'').trim(); });
+    return row;
+  });
+}
+function splitLine(line) {
+  const out=[]; let cur='',inQ=false;
+  for (const c of line) {
+    if (c==='"') { inQ=!inQ; }
+    else if (c===',' && !inQ) { out.push(cur); cur=''; }
+    else cur+=c;
+  }
+  out.push(cur);
+  return out;
+}
+
+// ═══════════════════════════════════
+// CSV IMPORT FLOW
+// ═══════════════════════════════════
+// Distances in CSV are already in MILES (Garmin account set to imperial)
+const BUCKETS=[
+  {name:'1 Mile',        lo:0.93, hi:1.09},
+  {name:'5K',            lo:2.98, hi:3.30},
+  {name:'10K',           lo:6.03, hi:6.47},
+  {name:'15K',           lo:9.01, hi:9.64},
+  {name:'Half Marathon', lo:12.74,hi:13.55},
+  {name:'Marathon',      lo:25.79,hi:27.03},
+  {name:'Ultra 50K',     lo:29.83,hi:32.32},
+];
+
+function handleCSV(input) {
+  const file = input.files[0]; if (!file) return;
+  input.value='';
+  const reader = new FileReader();
+  reader.onload = e => {
+    const all = parseCSV(e.target.result);
+    const runs = all.filter(r=>(r['Activity Type']||'').toLowerCase().includes('running'));
+    if (!runs.length) { toast('No running activities found.'); return; }
+    pendingRuns = runs;
+    pendingPRs  = detectPRs(runs);
+    if (db.runs.length > 0) {
+      document.getElementById('importModeModal').classList.add('open');
+    } else {
+      doImport('refresh');
+    }
+  };
+  reader.readAsText(file);
+}
+
+function detectPRs(rows) {
+  const best={};
+  rows.forEach(r=>{
+    const dist=parseFloat((r['Distance']||'').replace(/,/g,''));
+    const secs=toSecs(r['Time']||'');
+    if (!dist||isNaN(dist)||!secs||secs<60) return;
+    for (const b of BUCKETS) {
+      if (dist>=b.lo&&dist<=b.hi) {
+        if (!best[b.name]||secs<best[b.name].secs)
+          best[b.name]={secs,timeStr:r['Time'],dist,date:isoDate(r['Date']||''),title:r['Title']||''};
+        break;
+      }
+    }
+  });
+  return Object.entries(best).map(([name,d])=>({name,...d}));
+}
+
+function doImport(mode) {
+  document.getElementById('importModeModal').classList.remove('open');
+  if (mode==='refresh') {
+    db.runs = pendingRuns;
+  } else {
+    const existing = new Set(db.runs.map(r=>r['Date']));
+    db.runs = [...db.runs, ...pendingRuns.filter(r=>!existing.has(r['Date']))];
+  }
+  persist();
+  renderDash();
+  renderLog();
+  if (pendingPRs.length) {
+    renderImportPanel(mode);
+    showPane('prs', document.querySelectorAll('.tab')[1]);
+  } else {
+    toast('Data updated. No standard-distance PRs found.');
+  }
+  document.getElementById('hdrUploadTxt').textContent='Re-upload CSV';
+  document.getElementById('uploadStatus').textContent='✓ loaded';
+  document.getElementById('uploadStatus').style.display='inline';
+}
+
+function closeImportMode() {
+  document.getElementById('importModeModal').classList.remove('open');
+  pendingRuns=[]; pendingPRs=[];
+}
+
+// ═══════════════════════════════════
+// PR IMPORT PANEL
+// ═══════════════════════════════════
+function renderImportPanel(mode) {
+  const rows = document.getElementById('importRows');
+  rows.innerHTML='';
+  pendingPRs.forEach((pr,i)=>{
+    const t=hms(pr.secs);
+    const ex=db.prs.find(p=>p.distance===pr.name);
+    const exS=ex?toSecs(fmtTime(ex.h,ex.m,ex.s)):null;
+    const isNew=!ex, isFaster=ex&&pr.secs<exS, isSame=ex&&!isFaster;
+    const skip=mode==='update'&&isSame;
+    rows.innerHTML+=`<div class="import-row">
+      <input type="checkbox" id="ic${i}" ${skip?'disabled':'checked'}>
+      <div class="import-dist">${pr.name}</div>
+      <div class="import-time">${fmtTime(t.h,t.m,t.s)}</div>
+      <div class="import-meta">
+        ${pr.date?fmtDate(pr.date):''}${pr.title?' · '+pr.title:''}
+        ${isNew?'<span class="badge-new">✦ NEW</span>':''}
+        ${isFaster?'<span class="badge-faster">↑ FASTER</span>':''}
+        ${isSame?'<span class="badge-same">already saved</span>':''}
+      </div></div>`;
+  });
+  document.getElementById('importNote').textContent=`Found ${pendingPRs.length} PR${pendingPRs.length!==1?'s':''} in your history.`;
+  document.getElementById('importPanel').style.display='block';
+  document.getElementById('importPanel').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function confirmImport() {
+  let count=0;
+  pendingPRs.forEach((pr,i)=>{
+    const cb=document.getElementById(`ic${i}`);
+    if (!cb||!cb.checked||cb.disabled) return;
+    const t=hms(pr.secs);
+    const entry={id:`${Date.now()}${i}`,distance:pr.name,h:t.h,m:t.m,s:t.s,
+      race:pr.title||'',date:pr.date||'',notes:'',source:'garmin',pinned:false};
+    const idx=db.prs.findIndex(p=>p.distance===pr.name);
+    if (idx>=0) { entry.pinned=db.prs[idx].pinned; db.prs[idx]=entry; } else db.prs.push(entry);
+    count++;
+  });
+  persist(); dismissImport(); renderPRs(); renderPinnedPRs();
+  toast(`${count} PR${count!==1?'s':''} saved ✓`);
+}
+function dismissImport() { document.getElementById('importPanel').style.display='none'; pendingPRs=[]; }
+
+// ═══════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════
+function renderDash() {
+  if (!db.runs.length) {
+    document.getElementById('dashCTA').style.display='';
+    document.getElementById('dashData').style.display='none';
+    return;
+  }
+  const now=new Date(), mo=now.getMonth(), yr=now.getFullYear();
+  let mMi=0,mCt=0,yMi=0,yCt=0,aMi=0,aCt=0;
+  db.runs.forEach(r=>{
+    const dist=parseFloat((r['Distance']||'').replace(/,/g,''));
+    if (isNaN(dist)||dist<=0) return;
+    const mi=dist; // CSV distances are already in miles
+    const d=new Date(r['Date']||'');
+    aMi+=mi; aCt++;
+    if (d.getFullYear()===yr) { yMi+=mi; yCt++; }
+    if (d.getFullYear()===yr&&d.getMonth()===mo) { mMi+=mi; mCt++; }
+  });
+  const fmt=v=>v>=1000?(v/1000).toFixed(1)+'k':Math.round(v).toString();
+  document.getElementById('miMonth').textContent=fmt(mMi);
+  document.getElementById('miYear').textContent=fmt(yMi);
+  document.getElementById('miAll').textContent=fmt(aMi);
+  document.getElementById('miMonthR').textContent=`${mCt} run${mCt!==1?'s':''}`;
+  document.getElementById('miYearR').textContent=`${yCt} run${yCt!==1?'s':''}`;
+  document.getElementById('miAllR').textContent=`${aCt} total runs`;
+  document.getElementById('dashCTA').style.display='none';
+  document.getElementById('dashData').style.display='block';
+  renderPinnedPRs();
+}
+function renderPinnedPRs() {
+  const grid=document.getElementById('pinnedGrid');
+  const noPins=document.getElementById('noPinned');
+  const hint=document.getElementById('pinHint');
+  const pinned=db.prs.filter(p=>p.pinned);
+  grid.innerHTML='';
+  if (!pinned.length) { grid.appendChild(noPins); noPins.style.display=''; hint.style.display=''; return; }
+  noPins.style.display='none'; hint.style.display='none';
+  const order=['1 Mile','5K','10K','15K','Half Marathon','Marathon','Ultra 50K','Ultra 50M','Ultra 100M'];
+  [...pinned].sort((a,b)=>(order.indexOf(a.distance)<0?99:order.indexOf(a.distance))-(order.indexOf(b.distance)<0?99:order.indexOf(b.distance)))
+  .forEach(pr=>{
+    const p=calcPace(pr.distance,pr.h,pr.m,pr.s);
+    const c=document.createElement('div'); c.className='pinned-card';
+    c.innerHTML=`<div class="pinned-dist">${pr.distance}</div><div class="pinned-time">${fmtTime(pr.h,pr.m,pr.s)}</div>${p?`<div class="pinned-pace">${p}</div>`:''}`;
+    grid.appendChild(c);
+  });
+}
+
+// ═══════════════════════════════════
+// PRs
+// ═══════════════════════════════════
+function renderPRs() {
+  const grid=document.getElementById('prGrid'), empty=document.getElementById('prEmpty');
+  grid.innerHTML='';
+  if (!db.prs.length) { empty.style.display=''; grid.style.display='none'; return; }
+  empty.style.display='none'; grid.style.display='';
+  const order=['1 Mile','5K','10K','15K','Half Marathon','Marathon','Ultra 50K','Ultra 50M','Ultra 100M'];
+  [...db.prs].sort((a,b)=>(order.indexOf(a.distance)<0?99:order.indexOf(a.distance))-(order.indexOf(b.distance)<0?99:order.indexOf(b.distance)))
+  .forEach(pr=>{
+    const p=calcPace(pr.distance,pr.h,pr.m,pr.s);
+    const c=document.createElement('div'); c.className='pr-card'+(pr.pinned?' pinned':'');
+    c.innerHTML=`
+      <div class="pr-actions">
+        <button class="ic-btn pin ${pr.pinned?'on':''}" title="${pr.pinned?'Unpin':'Pin'}" onclick="togglePin('${pr.id}')">📌</button>
+        <button class="ic-btn edit" title="Edit" onclick="openPRModal('${pr.id}')">✏️</button>
+        <button class="ic-btn del" title="Delete" onclick="deletePR('${pr.id}')">✕</button>
+      </div>
+      ${pr.source==='garmin'?'<span class="pr-src">GARMIN</span>':''}
+      <div class="pr-dist-lbl">${pr.distance}</div>
+      <div class="pr-time-big">${fmtTime(pr.h,pr.m,pr.s)}</div>
+      <div class="pr-meta">${pr.race||''}${pr.race&&pr.date?' · ':''}${pr.date?fmtDate(pr.date):''}${pr.notes?'<br>'+pr.notes:''}</div>
+      ${p?`<div class="pr-pace-pill">${p}</div>`:''}`;
+    grid.appendChild(c);
+  });
+}
+function togglePin(id) {
+  const pr=db.prs.find(p=>p.id===id); if(!pr) return;
+  pr.pinned=!pr.pinned; persist(); renderPRs(); renderPinnedPRs();
+  toast(pr.pinned?'Pinned to dashboard ✓':'Unpinned');
+}
+function deletePR(id) {
+  if (!confirm('Delete this PR?')) return;
+  db.prs=db.prs.filter(p=>p.id!==id); persist(); renderPRs(); renderPinnedPRs();
+}
+function openPRModal(id) {
+  editPRId=id||null;
+  const pr=id?db.prs.find(p=>p.id===id):null;
+  document.getElementById('prModalTitle').textContent=pr?'Edit PR':'Add PR';
+  document.getElementById('prDist').value=pr?pr.distance:'5K';
+  document.getElementById('prH').value=pr?pr.h:'';
+  document.getElementById('prM').value=pr?pr.m:'';
+  document.getElementById('prS').value=pr?pr.s:'';
+  document.getElementById('prRace').value=pr?pr.race:'';
+  document.getElementById('prDate').value=pr?pr.date:'';
+  document.getElementById('prNotes').value=pr?pr.notes:'';
+  document.getElementById('prCustomWrap').style.display='none';
+  document.getElementById('prModal').classList.add('open');
+}
+function closePRModal() { document.getElementById('prModal').classList.remove('open'); }
+document.getElementById('prDist').addEventListener('change',function(){
+  document.getElementById('prCustomWrap').style.display=this.value==='custom'?'':'none';
+});
+function savePRModal() {
+  const raw=document.getElementById('prDist').value;
+  const dist=raw==='custom'?(document.getElementById('prCustomName').value||'Custom'):raw;
+  const h=document.getElementById('prH').value, m=document.getElementById('prM').value, s=document.getElementById('prS').value;
+  if (!m&&!h) { alert('Please enter a time.'); return; }
+  const entry={
+    id:editPRId||Date.now().toString(), distance:dist,
+    h:+h||0,m:+m||0,s:+s||0,
+    race:document.getElementById('prRace').value,
+    date:document.getElementById('prDate').value,
+    notes:document.getElementById('prNotes').value,
+    source:editPRId?(db.prs.find(p=>p.id===editPRId)||{}).source||'manual':'manual',
+    pinned:editPRId?(db.prs.find(p=>p.id===editPRId)||{}).pinned||false:false
+  };
+  if (editPRId) {
+    const idx=db.prs.findIndex(p=>p.id===editPRId);
+    if (idx>=0) db.prs[idx]=entry;
+  } else {
+    const idx=db.prs.findIndex(p=>p.distance===dist);
+    if (idx>=0) { if(!confirm(`Replace existing ${dist} PR?`))return; db.prs[idx]=entry; }
+    else db.prs.push(entry);
+  }
+  persist(); renderPRs(); renderPinnedPRs(); closePRModal();
+}
+
+// ═══════════════════════════════════
+// ACTIVITY LOG
+// ═══════════════════════════════════
+function buildLogData() {
+  return db.runs.map((r,i)=>({
+    _idx: i,
+    Date: isoDate(r['Date']||''),
+    Title: r['Title']||'',
+    Type: r['Activity Type']||'',
+    Distance: parseFloat((r['Distance']||'0').replace(/,/g,''))||0,
+    Time: r['Time']||'--',
+    TimeSecs: toSecs(r['Time'])||0,
+    Pace: r['Avg Pace']||'--',
+    PaceSecs: toSecs(r['Avg Pace'])||0,
+    Calories: parseInt((r['Calories']||'0').replace(/,/g,''))||0,
+  }));
+}
+
+function filterLog() {
+  const q=(document.getElementById('logSearch').value||'').toLowerCase();
+  const all=buildLogData();
+  logFiltered=q ? all.filter(r=>r.Title.toLowerCase().includes(q)||r.Date.includes(q)||r.Type.toLowerCase().includes(q)) : all;
+  sortLogData();
+  logPage=0;
+  renderLogTable();
+}
+
+function sortLog(col) {
+  if (logSort.col === col) {
+    logSort.dir *= -1;
+  } else {
+    logSort.col = col;
+    // default: dates & text descending (newest/Z first), numbers ascending
+    logSort.dir = (col === 'Date' || col === 'Title' || col === 'Type') ? -1 : 1;
+  }
+  // update header arrows
+  document.querySelectorAll('thead th').forEach(th => {
+    th.classList.remove('sorted');
+    const arrow = th.querySelector('.sort-arrow');
+    if (arrow) arrow.textContent = '↕';
+  });
+  const th = document.getElementById('th-' + col);
+  if (th) {
+    th.classList.add('sorted');
+    const arrow = th.querySelector('.sort-arrow');
+    if (arrow) arrow.textContent = logSort.dir === 1 ? '↑' : '↓';
+  }
+  sortLogData(); renderLogTable();
+}
+
+function sortLogData() {
+  const {col,dir}=logSort;
+  logFiltered.sort((a,b)=>{
+    let av=a[col], bv=b[col];
+    if (col==='Time') { av=a.TimeSecs; bv=b.TimeSecs; }
+    if (col==='Pace') { av=a.PaceSecs; bv=b.PaceSecs; }
+    if (typeof av==='string') return av.localeCompare(bv)*dir;
+    return (av-bv)*dir;
+  });
+}
+
+function renderLog() {
+  const empty=document.getElementById('logEmpty');
+  if (!db.runs.length) {
+    document.querySelector('.log-wrap').style.display='none';
+    document.getElementById('pagination').style.display='none';
+    empty.style.display='block'; return;
+  }
+  document.querySelector('.log-wrap').style.display='';
+  document.getElementById('pagination').style.display='';
+  empty.style.display='none';
+  if (!logFiltered.length) filterLog();
+  renderLogTable();
+}
+
+function renderLogTable() {
+  const tbody=document.getElementById('logBody');
+  tbody.innerHTML='';
+  const start=logPage*PAGE, end=Math.min(start+PAGE, logFiltered.length);
+  const slice=logFiltered.slice(start,end);
+
+  slice.forEach(r=>{
+    const mi=r.Distance.toFixed(2); // already miles
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td>${r.Date?fmtDate(r.Date):''}</td>
+      <td>${r.Title||'<span style="color:var(--sub2)">—</span>'}</td>
+      <td class="muted">${r.Type.replace(' Running',' Run')}</td>
+      <td>${mi} mi</td>
+      <td>${r.Time}</td>
+      <td class="muted">${r.Pace!=='--'?r.Pace+' /mi':'--'}</td>
+      <td class="muted">${r.Calories||'--'}</td>
+      <td><div class="row-actions">
+        <button class="ic-btn edit" onclick="openRunModal(${r._idx})" title="Edit">✏️</button>
+        <button class="ic-btn del" onclick="deleteRun(${r._idx})" title="Delete">✕</button>
+      </div></td>`;
+    tbody.appendChild(tr);
+  });
+
+  renderPagination();
+}
+
+function renderPagination() {
+  const total=logFiltered.length;
+  const pages=Math.ceil(total/PAGE);
+  const start=logPage*PAGE+1, end=Math.min((logPage+1)*PAGE,total);
+  const pg=document.getElementById('pagination');
+  pg.innerHTML=`
+    <div class="page-info">Showing ${start}–${end} of ${total} runs</div>
+    <div class="page-btns">
+      <button class="page-btn" onclick="goPage(${logPage-1})" ${logPage===0?'disabled':''}>← Prev</button>
+      ${Array.from({length:Math.min(pages,7)},(_,i)=>{
+        const p=pages<=7?i:logPage<4?i:logPage>pages-4?pages-7+i:logPage-3+i;
+        return `<button class="page-btn ${p===logPage?'active':''}" onclick="goPage(${p})">${p+1}</button>`;
+      }).join('')}
+      <button class="page-btn" onclick="goPage(${logPage+1})" ${logPage>=pages-1?'disabled':''}>Next →</button>
+    </div>`;
+}
+
+function goPage(p) {
+  const pages=Math.ceil(logFiltered.length/PAGE);
+  if (p<0||p>=pages) return;
+  logPage=p; renderLogTable();
+  document.querySelector('.log-wrap').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function autoCalcRun() {
+  const dist = parseFloat(document.getElementById('runDist').value);
+  const timeStr = document.getElementById('runTime').value.trim();
+  const secs = toSecs(timeStr);
+
+  // auto pace
+  if (dist > 0 && secs > 0) {
+    const paceSecs = secs / dist;
+    const pm = Math.floor(paceSecs / 60);
+    const ps = Math.round(paceSecs % 60);
+    document.getElementById('runPace').value = `${pm}:${String(ps).padStart(2,'0')}`;
+    document.getElementById('paceAutoTag').style.display = 'inline';
+  }
+
+  // auto calories: 150 cal/mile
+  if (dist > 0) {
+    document.getElementById('runCal').value = Math.round(dist * 150);
+    document.getElementById('calAutoTag').style.display = 'inline';
+  }
+}
+
+// Edit run modal — also handles new manual runs
+function openRunModal(idx) {
+  editRunIdx = idx; // null = new run
+  const isNew = idx === null;
+  document.getElementById('runModalTitle').textContent = isNew ? 'Add Run' : 'Edit Run';
+  if (isNew) {
+    document.getElementById('runTitle').value = '';
+    document.getElementById('runDate').value = new Date().toISOString().slice(0,10);
+    document.getElementById('runDist').value = '';
+    document.getElementById('runTime').value = '';
+    document.getElementById('runPace').value = '';
+    document.getElementById('runCal').value = '';
+  } else {
+    const r = db.runs[idx]; if (!r) return;
+    document.getElementById('runTitle').value = r['Title']||'';
+    document.getElementById('runDate').value = isoDate(r['Date']||'');
+    document.getElementById('runDist').value = parseFloat((r['Distance']||'0').replace(/,/g,''))||'';
+    document.getElementById('runTime').value = r['Time']||'';
+    document.getElementById('runPace').value = r['Avg Pace']||'';
+    document.getElementById('runCal').value = (r['Calories']||'').replace(/,/g,'')||'';
+  }
+  document.getElementById('paceAutoTag').style.display = 'none';
+  document.getElementById('calAutoTag').style.display = 'none';
+  document.getElementById('runModal').classList.add('open');
+}
+function closeRunModal() { document.getElementById('runModal').classList.remove('open'); }
+function saveRunModal() {
+  const isNew = editRunIdx === null;
+  const entry = {
+    'Activity Type': 'Running',
+    'Title': document.getElementById('runTitle').value || 'Manual Run',
+    'Date':  document.getElementById('runDate').value,
+    'Distance': document.getElementById('runDist').value,
+    'Time':  document.getElementById('runTime').value,
+    'Avg Pace': document.getElementById('runPace').value,
+    'Calories': document.getElementById('runCal').value,
+    '_manual': true
+  };
+  if (isNew) {
+    db.runs.push(entry);
+    toast('Run added ✓');
+  } else {
+    Object.assign(db.runs[editRunIdx], entry);
+    toast('Run updated ✓');
+  }
+  persist(); closeRunModal();
+  logFiltered = []; filterLog();
+  renderDash();
+}
+function deleteRun(idx) {
+  if (!confirm('Delete this run from your log?')) return;
+  db.runs.splice(idx,1); persist();
+  logFiltered=[]; filterLog();
+  renderDash();
+  toast('Run deleted');
+}
+
+// ═══════════════════════════════════
+// EXPORT / IMPORT ACTIVITIES JSON
+// ═══════════════════════════════════
+function exportActivities() {
+  if (!db.runs.length) { toast('No activities to export.'); return; }
+  const payload = JSON.stringify({ version: 1, exported: new Date().toISOString(), runs: db.runs }, null, 2);
+  const blob = new Blob([payload], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `stride_activities_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast(`${db.runs.length} activities exported ✓`);
+}
+
+function importActivities(input) {
+  const file = input.files[0]; if (!file) return;
+  input.value = '';
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      const runs = data.runs || data; // support both wrapped and bare array
+      if (!Array.isArray(runs)) { toast('Invalid file format.'); return; }
+      const existing = new Set(db.runs.map(r => r['Date'] + '|' + (r['Title']||'')));
+      const newRuns = runs.filter(r => !existing.has((r['Date']||'') + '|' + (r['Title']||'')));
+      db.runs = [...db.runs, ...newRuns];
+      persist(); logFiltered = []; filterLog(); renderDash();
+      toast(`${newRuns.length} new activities imported ✓`);
+    } catch { toast('Could not read file — make sure it\'s a Stride JSON export.'); }
+  };
+  reader.readAsText(file);
+}
+
+// ═══════════════════════════════════
+// ACTIVITY PICKER (for race modal)
+// ═══════════════════════════════════
+function filterActPicker() {
+  const q = (document.getElementById('actSearch').value || '').toLowerCase().trim();
+  const list = document.getElementById('actPickerList');
+  if (!q) { list.style.display = 'none'; return; }
+
+  const matches = db.runs
+    .map((r, i) => ({ r, i }))
+    .filter(({ r }) => {
+      const title = (r['Title'] || '').toLowerCase();
+      const date  = isoDate(r['Date'] || '');
+      return title.includes(q) || date.includes(q);
+    })
+    .slice(0, 10); // cap at 10 results
+
+  if (!matches.length) {
+    list.innerHTML = '<div style="padding:10px 12px;font-size:12px;color:var(--sub2)">No matching activities found</div>';
+    list.style.display = 'block';
+    return;
+  }
+
+  list.innerHTML = matches.map(({ r, i }) => {
+    const dist = parseFloat((r['Distance'] || '0').replace(/,/, '')) || 0;
+    const date = isoDate(r['Date'] || '');
+    return `<div class="act-pick-item" onclick="selectActivity(${i})">
+      <div class="act-pick-title">${r['Title'] || 'Untitled'}</div>
+      <div class="act-pick-meta">${date ? fmtDate(date) : ''} · ${dist.toFixed(2)} mi · ${r['Time'] || '--'}</div>
+    </div>`;
+  }).join('');
+  list.style.display = 'block';
+}
+
+function selectActivity(idx) {
+  const r = db.runs[idx]; if (!r) return;
+
+  // auto-fill race fields from the activity
+  const title = r['Title'] || '';
+  const date  = isoDate(r['Date'] || '');
+  const time  = r['Time'] || '';
+  const dist  = parseFloat((r['Distance'] || '0').replace(/,/, '')) || 0;
+
+  // Only fill name if empty
+  if (!document.getElementById('rName').value) {
+    document.getElementById('rName').value = title;
+  }
+  if (date)  document.getElementById('rDate').value = date;
+  if (time)  document.getElementById('rTime').value = time;
+
+  // snap distance to nearest bucket label
+  const distLabel = snapDistLabel(dist);
+  if (distLabel) document.getElementById('rDist').value = distLabel;
+
+  // show selected badge
+  const sel = document.getElementById('actPickerSelected');
+  document.getElementById('actPickerSelectedText').textContent =
+    `✓ Linked: ${title} · ${date ? fmtDate(date) : ''} · ${time}`;
+  sel.style.display = 'flex';
+
+  // hide dropdown
+  document.getElementById('actPickerList').style.display = 'none';
+  document.getElementById('actSearch').value = '';
+}
+
+function clearActPicker() {
+  document.getElementById('actPickerSelected').style.display = 'none';
+  document.getElementById('actSearch').value = '';
+  document.getElementById('actPickerList').style.display = 'none';
+}
+
+function snapDistLabel(miles) {
+  for (const b of BUCKETS) {
+    if (miles >= b.lo && miles <= b.hi) return b.name;
+  }
+  // outside buckets — pick closest standard
+  if (miles > 0 && miles < 2)   return '1 Mile';
+  if (miles >= 2 && miles < 4)  return '5K';
+  if (miles >= 4 && miles < 8)  return '10K';
+  if (miles >= 8 && miles < 11) return '15K';
+  if (miles >= 11 && miles < 20) return 'Half Marathon';
+  if (miles >= 20 && miles < 28) return 'Marathon';
+  return 'Other';
+}
+
+// close picker on outside click
+document.addEventListener('click', e => {
+  if (!e.target.closest('#actPickerWrap')) {
+    const l = document.getElementById('actPickerList');
+    if (l) l.style.display = 'none';
+  }
+});
+
+// ═══════════════════════════════════
+// RACES (flip cards)
+// ═══════════════════════════════════
+let editRaceId = null;
+let tmpMedalImg = null;
+let tmpExtraImgs = []; // up to 5
+
+function renderRaces() {
+  const grid  = document.getElementById('racesGrid');
+  const empty = document.getElementById('racesEmpty');
+  grid.innerHTML = '';
+  const races = db.races || [];
+  if (!races.length) { empty.style.display=''; grid.style.display='none'; return; }
+  empty.style.display='none'; grid.style.display='';
+
+  const bClass = {finisher:'mb-finisher',ag:'mb-ag',podium:'mb-podium'};
+  const bLabel = {finisher:'Finisher',ag:'Age Group',podium:'Podium'};
+
+  // newest first
+  [...races].sort((a,b)=>(b.date||'').localeCompare(a.date||'')).forEach(r=>{
+    const wrap = document.createElement('div');
+    wrap.className = 'race-flip';
+    wrap.id = 'raceflip_'+r.id;
+    wrap.onclick = (e) => {
+      if (e.target.closest('button')) return;
+      wrap.classList.toggle('flipped');
+    };
+
+    const extras = (r.photos||[]).map((p,i)=>
+      `<img class="race-back-thumb" src="${p}" alt="photo ${i+1}" onclick="event.stopPropagation();openLB('${p}','${r.name}')">`
+    ).join('');
+
+    wrap.innerHTML = `<div class="race-flip-inner">
+      <div class="race-front">
+        ${r.medalImg
+          ? `<img class="race-front-img" src="${r.medalImg}" alt="${r.name}">`
+          : '<div class="race-front-no-img">🏅</div>'}
+        <div class="race-front-body">
+          <div class="race-front-name">${r.name}</div>
+          <div class="race-front-date">${r.dist}${r.date?' · '+fmtDate(r.date):''}</div>
+          <div class="race-flip-hint">tap to flip</div>
+        </div>
+      </div>
+      <div class="race-back">
+        <div class="race-back-head">
+          <div class="race-back-name">${r.name}</div>
+          <div class="race-back-meta">
+            ${r.date?'📅 '+fmtDate(r.date)+'<br>':''}
+            ${r.dist?'📍 '+r.dist+'<br>':''}
+            ${r.time?'⏱ '+r.time+'<br>':''}
+          </div>
+          <span class="race-back-badge ${bClass[r.type]||'mb-finisher'}">${bLabel[r.type]||r.type}</span>
+        </div>
+        ${r.notes?`<div class="race-back-notes">${r.notes}</div>`:'<div class="race-back-notes" style="color:var(--sub2)">No notes added.</div>'}
+        ${extras?`<div class="race-back-photos">${extras}</div>`:''}
+        <div class="race-back-actions">
+          <button class="ic-btn edit" onclick="openRaceModal('${r.id}')" title="Edit">✏️</button>
+          <button class="ic-btn del" onclick="deleteRace('${r.id}')" title="Delete">✕</button>
+        </div>
+      </div>
+    </div>`;
+    grid.appendChild(wrap);
+  });
+}
+
+function openRaceModal(id) {
+  editRaceId = id || null;
+  tmpMedalImg = null;
+  tmpExtraImgs = [];
+  // reset activity picker
+  document.getElementById('actSearch').value = '';
+  document.getElementById('actPickerList').style.display = 'none';
+  document.getElementById('actPickerSelected').style.display = 'none';
+  const r = id ? (db.races||[]).find(x=>x.id===id) : null;
+  document.getElementById('raceModalTitle').textContent = r ? 'Edit Race' : 'Add Race';
+  document.getElementById('rName').value  = r ? r.name  : '';
+  document.getElementById('rDate').value  = r ? r.date  : '';
+  document.getElementById('rDist').value  = r ? r.dist  : 'Half Marathon';
+  document.getElementById('rTime').value  = r ? r.time  : '';
+  document.getElementById('rType').value  = r ? r.type  : 'finisher';
+  document.getElementById('rNotes').value = r ? r.notes : '';
+
+  // medal photo
+  if (r && r.medalImg) { tmpMedalImg = r.medalImg; }
+  document.getElementById('rMedalWrap').innerHTML = tmpMedalImg
+    ? `<img src="${tmpMedalImg}" class="img-preview"><div style="font-size:11px;color:var(--sub);margin-top:5px">Click to swap</div>`
+    : '<div style="font-size:26px">🏅</div><div style="font-size:11px;color:var(--sub);margin-top:4px">Click to upload medal photo</div>';
+
+  // extra photos
+  if (r && r.photos) tmpExtraImgs = [...r.photos];
+  renderPhotoGrid();
+
+  document.getElementById('raceModal').classList.add('open');
+}
+function closeRaceModal() { document.getElementById('raceModal').classList.remove('open'); }
+
+function previewMedalPhoto(input) {
+  if (!input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    tmpMedalImg = e.target.result;
+    document.getElementById('rMedalWrap').innerHTML = `<img src="${e.target.result}" class="img-preview"><div style="font-size:11px;color:var(--sub);margin-top:5px">Click to swap</div>`;
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+function renderPhotoGrid() {
+  const grid = document.getElementById('rPhotoGrid');
+  grid.innerHTML = '';
+  tmpExtraImgs.forEach((src, i) => {
+    const cell = document.createElement('div');
+    cell.className = 'photo-cell';
+    cell.innerHTML = `<img src="${src}" alt="photo"><button class="photo-del" onclick="removeExtraPhoto(${i})">✕</button>`;
+    grid.appendChild(cell);
+  });
+  if (tmpExtraImgs.length < 5) {
+    const add = document.createElement('div');
+    add.className = 'photo-cell';
+    add.innerHTML = `<div class="photo-cell-add">+</div>`;
+    add.onclick = () => { const inp = document.createElement('input'); inp.type='file'; inp.accept='image/*'; inp.onchange=e=>addExtraPhoto(e.target.files[0]); inp.click(); };
+    grid.appendChild(add);
+    const lbl = document.createElement('div');
+    lbl.className = 'photo-label';
+    lbl.textContent = `${tmpExtraImgs.length}/5 photos`;
+    grid.appendChild(lbl);
+  }
+}
+function addExtraPhoto(file) {
+  if (!file || tmpExtraImgs.length >= 5) return;
+  const reader = new FileReader();
+  reader.onload = e => { tmpExtraImgs.push(e.target.result); renderPhotoGrid(); };
+  reader.readAsDataURL(file);
+}
+function removeExtraPhoto(i) {
+  tmpExtraImgs.splice(i,1); renderPhotoGrid();
+}
+
+function saveRace() {
+  const name = document.getElementById('rName').value;
+  if (!name) { alert('Please enter a race name.'); return; }
+  if (!db.races) db.races = [];
+  const entry = {
+    id: editRaceId || Date.now().toString(),
+    name,
+    date:     document.getElementById('rDate').value,
+    dist:     document.getElementById('rDist').value,
+    time:     document.getElementById('rTime').value,
+    type:     document.getElementById('rType').value,
+    notes:    document.getElementById('rNotes').value,
+    medalImg: tmpMedalImg || null,
+    photos:   [...tmpExtraImgs]
+  };
+  if (editRaceId) {
+    const idx = db.races.findIndex(r=>r.id===editRaceId);
+    if (idx>=0) db.races[idx] = entry;
+  } else {
+    db.races.push(entry);
+  }
+  persist(); renderRaces(); closeRaceModal();
+}
+function deleteRace(id) {
+  if (!confirm('Delete this race?')) return;
+  db.races = (db.races||[]).filter(r=>r.id!==id);
+  persist(); renderRaces();
+}
+
+// ═══════════════════════════════════
+// LIGHTBOX
+// ═══════════════════════════════════
+function openLB(src,cap) { document.getElementById('lbImg').src=src; document.getElementById('lbCap').textContent=cap; document.getElementById('lightbox').classList.add('open'); }
+function closeLB() { document.getElementById('lightbox').classList.remove('open'); }
+
+// ═══════════════════════════════════
+// TOAST
+// ═══════════════════════════════════
+let toastT;
+function toast(msg) {
+  const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show');
+  clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove('show'),3000);
+}
+
+// overlay bg close
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
+
+// ═══════════════════════════════════
+// BOTTOM NAV (iOS)
+// ═══════════════════════════════════
+function setBottomNav(activeId) {
+  document.querySelectorAll('.bottom-nav-btn').forEach(b => b.classList.remove('active'));
+  const el = document.getElementById(activeId);
+  if (el) el.classList.add('active');
+}
+
+// Sync desktop tabs with bottom nav
+document.querySelectorAll('.tab')[0].addEventListener('click', () => setBottomNav('bnDash'));
+document.querySelectorAll('.tab')[1].addEventListener('click', () => setBottomNav('bnPrs'));
+document.querySelectorAll('.tab')[2].addEventListener('click', () => setBottomNav('bnLog'));
+document.querySelectorAll('.tab')[3].addEventListener('click', () => setBottomNav('bnRaces'));
+function setBottomNav(activeId) {
+  document.querySelectorAll('.bottom-nav-btn').forEach(b => b.classList.remove('active'));
+  const el = document.getElementById(activeId);
+  if (el) el.classList.add('active');
+}
+
+// Prevent double-tap zoom on iOS buttons
+document.addEventListener('touchend', function(e) {
+  if (e.target.closest('button, .btn, .ic-btn, .upload-pill, .dash-cta, label')) {
+    e.preventDefault();
+    e.target.closest('button, .btn, .ic-btn, .upload-pill, .dash-cta, label').click();
+  }
+}, { passive: false });
+
+// ═══════════════════════════════════
+// INIT
+// ═══════════════════════════════════
+(function(){
+  if (db.runs.length) {
+    renderDash();
+    document.getElementById('hdrUploadTxt').textContent='Re-upload CSV';
+    document.getElementById('uploadStatus').textContent='✓ loaded';
+    document.getElementById('uploadStatus').style.display='inline';
+  } else {
+    document.getElementById('dashCTA').style.display='block';
+    document.getElementById('dashData').style.display='none';
+  }
+  renderPRs(); renderRaces();
+})();
+</script>
+</body>
+</html>
